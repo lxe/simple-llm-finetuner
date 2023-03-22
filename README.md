@@ -1,4 +1,4 @@
-# Simple LLaMA FineTuner
+# 🦙 Simple LLaMA FineTuner
 
 Simple LLaMA FineTuner is a user-friendly interface designed to facilitate fine-tuning the LLaMA-7B language model using peft/LoRA method. With this intuitive UI, you can easily manage your dataset, customize parameters, train, and evaluate the model's inference capabilities.
 
