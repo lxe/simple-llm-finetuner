@@ -39,6 +39,8 @@ With this intuitive UI, you can easily manage your dataset, customize parameters
 I recommend using a virtual environment to install the required packages. Conda preferred
 
 ```
+conda create -n llama-finetuner python=3.10
+conda activate llama-finetuner
 conda install -y cuda -c nvidia/label/cuda-11.7.0
 conda install -y pytorch=1.13.1 pytorch-cuda=11.7 -c pytorch
 ```
