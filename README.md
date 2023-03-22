@@ -19,6 +19,12 @@ With this intuitive UI, you can easily manage your dataset, customize parameters
 - Adjustable parameters for fine-tuning and inference
 - Begner-friendly UI with explanations for each parameter
 
+## TODO
+
+- [ ] Accelerate / DeepSpeed 
+- [ ] Load other models
+- [ ] More dataset preparation tools
+
 ## Getting Started
 
 ### Prerequisites
