@@ -11,7 +11,7 @@ Simple LLaMA FineTuner is a user-friendly interface designed to facilitate fine-
 
 ## Features
 
-- Fine-tuning LLaMA-7B on NVIDIA GTX 3090 (or similar hardware)
+- Fine-tuning LLaMA-7B on NVIDIA RTX 3090 (or better)
 - Simply paste datasets in the UI, separated by double blank lines
 - Adjustable parameters for fine-tuning and inference
 - Begner-friendly UI with explanations for each parameter
@@ -22,7 +22,6 @@ Simple LLaMA FineTuner is a user-friendly interface designed to facilitate fine-
 
 - Python 3.7 or later
 - CUDA 11.0 or later
-- NVIDIA 3090 GPU (or similar hardware) for optimal performance
 
 ### Usage
 
