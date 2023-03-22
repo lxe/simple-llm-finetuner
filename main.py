@@ -2,134 +2,106 @@ import os
 import argparse
 import random
 import torch
-import gradio as gr
 import transformers
-
-from datasets import Dataset
-from transformers import LlamaForCausalLM, LlamaTokenizer, GenerationConfig
-from peft import prepare_model_for_int8_training, LoraConfig, get_peft_model, PeftModel
+import peft
+import datasets
+import gradio as gr
 
 model = None
 tokenizer = None
-peft_model = None
+current_peft_model = None
 
-def random_hyphenated_word():
-    word_list = ['apple', 'banana', 'cherry', 'date', 'elderberry', 'fig']
-    word1 = random.choice(word_list)
-    word2 = random.choice(word_list)
-    return word1 + '-' + word2
+def load_base_model():
+    global model
+    print('Loading base model...')
+    model = transformers.LlamaForCausalLM.from_pretrained(
+        'decapoda-research/llama-7b-hf',
+        load_in_8bit=True,
+        torch_dtype=torch.float16,
+        device_map='auto'
+    )
 
-def maybe_load_models():
+def load_tokenizer():
+    global tokenizer
+    print('Loading tokenizer...')
+    tokenizer = transformers.LlamaTokenizer.from_pretrained(
+        'decapoda-research/llama-7b-hf',
+    )
+
+def load_peft_model(model_name):
+    global model
+    print('Loading peft model ' + model_name + '...')
+    model = peft.PeftModel.from_pretrained(
+        model, model_name,
+        torch_dtype=torch.float16
+    )
+
+def reset_model():
     global model
     global tokenizer
-
-    if model is None:
-        model = LlamaForCausalLM.from_pretrained(
-            "decapoda-research/llama-7b-hf",
-            load_in_8bit=True,
-            torch_dtype=torch.float16,
-            device_map="auto",
-        )
-
-    if tokenizer is None:
-        tokenizer = LlamaTokenizer.from_pretrained(
-            "decapoda-research/llama-7b-hf",
-        )
-
-def reset_models():
-    global model
-    global tokenizer
+    global current_peft_model
 
     del model
     del tokenizer
 
     model = None
     tokenizer = None
+    current_peft_model = None
 
 def generate_text(
-    model_name, 
+    peft_model,
     text, 
     temperature, 
     top_p, 
     top_k, 
-    repeat_penalty,
+    repetition_penalty, 
     max_new_tokens,
     progress=gr.Progress(track_tqdm=True)
 ):
     global model
     global tokenizer
+    global current_peft_model
 
-    maybe_load_models()
+    if (peft_model == 'None'): peft_model = None
 
-    tokenizer.pad_token_id = 0
+    if (current_peft_model != peft_model):
+        if (current_peft_model is None):
+            if (model is None): load_base_model()
+        else:
+            reset_model()
+            load_base_model()
+            load_tokenizer()
 
-    if model_name and model_name != "None":
-        model = PeftModel.from_pretrained(
-            model, model_name,
-            torch_dtype=torch.float16
-        )
+        current_peft_model = peft_model
+        if (peft_model is not None):
+            load_peft_model(peft_model)
+
+    if (model is None): load_base_model()
+    if (tokenizer is None): load_tokenizer()
+
+    assert model is not None
+    assert tokenizer is not None
 
     inputs = tokenizer(text, return_tensors="pt")
     input_ids = inputs["input_ids"].to(model.device)
 
-    # llama_config = transformers.LlamaConfig()
-    # print(llama_config)
-
-    stopping_criteria_list = transformers.StoppingCriteriaList()
-    generation_config = GenerationConfig(
-        # Whether to use greedy decoding. If set to False,
+    generation_config = transformers.GenerationConfig(
+        max_new_tokens=max_new_tokens,
+        temperature=temperature,
+        top_p=top_p,
+        top_k=top_k,
+        repetition_penalty=repetition_penalty,
         do_sample=True,
-
-        # Controls the 'temperature' of the softmax distribution during sampling.
-        # Higher values (e.g., 1.0) make the model generate more diverse and random outputs, 
-        # while lower values (e.g., 0.1) make it more deterministic and 
-        # focused on the highest probability tokens.
-        temperature=temperature,  
-
-        # Sets the nucleus sampling threshold. In nucleus sampling, 
-        # only the tokens whose cumulative probability exceeds 'top_p' are considered 
-        # for sampling. This technique helps to reduce the number of low probability 
-        # tokens considered during sampling, which can lead to more diverse and coherent outputs.
-        top_p=top_p,  
-
-        # Sets the number of top tokens to consider during sampling. 
-        # In top-k sampling, only the 'top_k' tokens with the highest probabilities 
-        # are considered for sampling. This method can lead to more focused and coherent 
-        # outputs by reducing the impact of low probability tokens.
-        top_k=top_k,  
-
-        # Applies a penalty to the probability of tokens that have already been generated, 
-        # discouraging the model from repeating the same words or phrases. The penalty is
-        # applied by dividing the token probability by a factor based on the number of times 
-        # the token has appeared in the generated text.
-        repeat_penalty=repeat_penalty,
-
-        # Limits the maximum number of tokens generated in a single iteration. 
-        # This can be useful to control the length of generated text, especially in tasks 
-        # like text summarization or translation, where the output should not be excessively long.
-        max_new_tokens=max_new_tokens,  
-
-        # typical_p=1,
-        # stopping_criteria=stopping_criteria_list,
-        # eos_token_id=llama_config.eos_token_id,
-        # pad_token_id=llama_config.eos_token_id
+        num_beams=1,
     )
 
+    output = model.generate(  # type: ignore
+        input_ids=input_ids,
+        attention_mask=torch.ones_like(input_ids),
+        generation_config=generation_config
+    )[0].cuda()
 
-
-    with torch.no_grad():
-        generation_output = model.generate(
-            input_ids=input_ids,
-            attention_mask=torch.ones_like(input_ids),
-            generation_config=generation_config,
-            # return_dict_in_generate=True,
-            # output_scores=True,
-            # eos_token_id=[tokenizer.eos_token_id],
-            use_cache=True,
-        )[0].cuda()
-
-    output_text = tokenizer.decode(generation_output)
-    return output_text.strip()
+    return tokenizer.decode(output, skip_special_tokens=True).strip()
 
 def tokenize_and_train(
     training_text,
@@ -147,8 +119,11 @@ def tokenize_and_train(
     global model
     global tokenizer
 
-    reset_models()
-    maybe_load_models()
+    if (model is None): load_base_model()
+    if (tokenizer is None): load_tokenizer()
+
+    assert model is not None
+    assert tokenizer is not None
 
     tokenizer.pad_token_id = 0
 
@@ -156,6 +131,7 @@ def tokenize_and_train(
     print("Number of samples: " + str(len(paragraphs)))
         
     def tokenize(item):
+        assert tokenizer is not None
         result = tokenizer(
             item["text"],
             truncation=True,
@@ -171,12 +147,12 @@ def tokenize_and_train(
         return {"text": text}
 
     paragraphs = [to_dict(x) for x in paragraphs]
-    data = Dataset.from_list(paragraphs)
+    data = datasets.Dataset.from_list(paragraphs)
     data = data.shuffle().map(lambda x: tokenize(x))
 
-    model = prepare_model_for_int8_training(model)
+    model = peft.prepare_model_for_int8_training(model)
 
-    model = get_peft_model(model, LoraConfig(
+    model = peft.get_peft_model(model, peft.LoraConfig(
         r=lora_r,
         lora_alpha=lora_alpha,
         target_modules=["q_proj", "v_proj"],
@@ -261,22 +237,22 @@ def tokenize_and_train(
     )
 
     result = trainer.train(resume_from_checkpoint=False)
-
     model.save_pretrained(output_dir)
-    
-    reset_models()
+    reset_model()
 
     return result
 
+def random_hyphenated_word():
+    word_list = ['apple', 'banana', 'cherry', 'date', 'elderberry', 'fig']
+    word1 = random.choice(word_list)
+    word2 = random.choice(word_list)
+    return word1 + '-' + word2
 
-with gr.Blocks(
-    css="#refresh-button { max-width: 32px }", 
-    title="Simple LLaMA Finetuner") as demo:
-    
+def training_tab():
     with gr.Tab("Finetuning"):
 
         with gr.Column():
-            training_text = gr.Textbox(lines=12, label="Training Data", info="Each sequence must be separated by a double newline")
+            training_text = gr.Textbox(lines=12, label="Training Data", info="Each sequence must be separated by 2 blank lines")
 
             max_seq_length = gr.Slider(
                 minimum=1, maximum=4096, value=512,
@@ -363,6 +339,7 @@ with gr.Blocks(
 
         abort_button.click(None, None, None, cancels=[train_progress])
 
+def inference_tab():
     with gr.Tab("Inference"):
         with gr.Row():
             with gr.Column():
@@ -380,13 +357,13 @@ with gr.Blocks(
             with gr.Column():
                 #  temperature, top_p, top_k, repeat_penalty, max_new_tokens
                 temperature = gr.Slider(
-                    minimum=0, maximum=1.99, value=0.7, step=0.01,
+                    minimum=0, maximum=1.99, value=0.4, step=0.01,
                     label="Temperature",
                     info="Controls the 'temperature' of the softmax distribution during sampling. Higher values (e.g., 1.0) make the model generate more diverse and random outputs, while lower values (e.g., 0.1) make it more deterministic and focused on the highest probability tokens."
                 )
 
                 top_p = gr.Slider(
-                    minimum=0, maximum=1, value=0.2, step=0.01,
+                    minimum=0, maximum=1, value=0.3, step=0.01,
                     label="Top P",
                     info="Sets the nucleus sampling threshold. In nucleus sampling, only the tokens whose cumulative probability exceeds 'top_p' are considered  for sampling. This technique helps to reduce the number of low probability tokens considered during sampling, which can lead to more diverse and coherent outputs."
                 )
@@ -398,7 +375,7 @@ with gr.Blocks(
                 )
 
                 repeat_penalty = gr.Slider(
-                    minimum=0, maximum=1.5, value=0.8, step=0.01,
+                    minimum=0, maximum=2.5, value=1.0, step=0.01,
                     label="Repeat Penalty",
                     info="Applies a penalty to the probability of tokens that have already been generated, discouraging the model from repeating the same words or phrases. The penalty is applied by dividing the token probability by a factor based on the number of times the token has appeared in the generated text."
                 )
@@ -413,12 +390,8 @@ with gr.Blocks(
                     generate_btn = gr.Button(
                         "Generate", variant="primary", label="Generate", 
                     )
-
-                    inference_abort_button = gr.Button(
-                        "Abort", label="Abort", 
-                    )
             
-        inference_progress = generate_btn.click(
+        generate_btn.click(
             fn=generate_text,
             inputs=[
                 lora_model,
@@ -432,10 +405,6 @@ with gr.Blocks(
             outputs=inference_output,
         )
 
-        lora_model.change(
-            fn=reset_models
-        )
-
         def update_models_list():
             return gr.Dropdown.update(choices=["None"] + [
                 d for d in os.listdir() if os.path.isdir(d) and d.startswith('lora-')
@@ -447,9 +416,13 @@ with gr.Blocks(
             outputs=lora_model,
         )
 
-    
+with gr.Blocks(
+    css="#refresh-button { max-width: 32px }", 
+    title="Simple LLaMA Finetuner") as demo:
+        training_tab()
+        inference_tab()
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Simple LLaMA Finetuner")
     parser.add_argument("-s", "--share", action="store_true", help="Enable sharing of the Gradio interface")
     args = parser.parse_args()

@@ -7,3 +7,4 @@ checkpoint**
 minimal-llama**
 upload.py
 models/
+.ipynb_checkpoints/
