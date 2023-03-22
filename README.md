@@ -1,5 +1,7 @@
 # 🦙 Simple LLaMA FineTuner
 
+[![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/lxe/simple-llama-finetuner/blob/master/Simple_LLaMA_FineTuner.ipynb)
+
 Simple LLaMA FineTuner is a user-friendly interface designed to facilitate fine-tuning the LLaMA-7B language model using peft/LoRA method. With this intuitive UI, you can easily manage your dataset, customize parameters, train, and evaluate the model's inference capabilities.
 
 ## Acknowledgements
