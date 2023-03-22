@@ -1,4 +1,5 @@
 import os
+import gc
 import argparse
 import random
 import torch
@@ -43,6 +44,10 @@ def reset_model():
 
     del model
     del tokenizer
+
+    gc.collect()
+    with torch.no_grad():
+        torch.cuda.empty_cache()
 
     model = None
     tokenizer = None
@@ -95,11 +100,12 @@ def generate_text(
         num_beams=1,
     )
 
-    output = model.generate(  # type: ignore
-        input_ids=input_ids,
-        attention_mask=torch.ones_like(input_ids),
-        generation_config=generation_config
-    )[0].cuda()
+    with torch.no_grad():
+        output = model.generate(  # type: ignore
+            input_ids=input_ids,
+            attention_mask=torch.ones_like(input_ids),
+            generation_config=generation_config
+        )[0].cuda()
 
     return tokenizer.decode(output, skip_special_tokens=True).strip()
 
@@ -238,6 +244,8 @@ def tokenize_and_train(
 
     result = trainer.train(resume_from_checkpoint=False)
     model.save_pretrained(output_dir)
+
+    del data
     reset_model()
 
     return result
