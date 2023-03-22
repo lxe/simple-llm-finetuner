@@ -1,6 +1,6 @@
-# Simple LLaMa FineTuner
+# Simple LLaMA FineTuner
 
-Simple LLaMa FineTuner is a user-friendly interface designed to facilitate fine-tuning the LLaMa-7B language model using peft/LoRA method. With this intuitive UI, you can easily manage your dataset, customize parameters, train, and evaluate the model's inference capabilities.
+Simple LLaMA FineTuner is a user-friendly interface designed to facilitate fine-tuning the LLaMA-7B language model using peft/LoRA method. With this intuitive UI, you can easily manage your dataset, customize parameters, train, and evaluate the model's inference capabilities.
 
 ## Acknowledgements
 
@@ -11,7 +11,7 @@ Simple LLaMa FineTuner is a user-friendly interface designed to facilitate fine-
 
 ## Features
 
-- Fine-tuning LLaMa-7B on NVIDIA GTX 3090 (or similar hardware)
+- Fine-tuning LLaMA-7B on NVIDIA GTX 3090 (or similar hardware)
 - Simply paste datasets in the UI, separated by double blank lines
 - Adjustable parameters for fine-tuning and inference
 - Begner-friendly UI with explanations for each parameter
