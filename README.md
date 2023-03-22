@@ -26,14 +26,14 @@ Simple LLaMa FineTuner is a user-friendly interface designed to facilitate fine-
 
 ### Usage
 
-0. I recommend using a virtual environment to install the required packages. Conda preferred
+I recommend using a virtual environment to install the required packages. Conda preferred
 
 ```
 conda install -y cuda -c nvidia/label/cuda-11.7.0
 conda install -y pytorch=1.13.1 pytorch-cuda=11.7 -c pytorch
 ```
 
-1. Clone the repository and install the required packages.
+Clone the repository and install the required packages.
 
 ```
 git clone https://github.com/lxe/simple-llama-finetuner.git
@@ -41,7 +41,7 @@ cd simple-llama-finetuner
 pip install -r requirements.txt
 ```
 
-2. Launch it
+Launch it
 
 ```
 python main.py
@@ -52,6 +52,10 @@ Open http://127.0.0.1:7860/ in your browser. Prepare your training data by separ
 After training is done, navigate to "Inference" tab, click "Reload Models", select your model, and play with it.
 
 Have fun!
+
+## Screenshots
+
+<img width="980" alt="Screenshot 2023-03-21 200929" src="https://user-images.githubusercontent.com/1486609/226793136-84531388-4081-49bb-b982-3f47e6ec25cd.png">
 
 ## License
 
