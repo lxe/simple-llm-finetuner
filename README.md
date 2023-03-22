@@ -63,7 +63,8 @@ Have fun!
 
 ## Screenshots
 
-<img width="980" alt="Screenshot 2023-03-21 200929" src="https://user-images.githubusercontent.com/1486609/226793136-84531388-4081-49bb-b982-3f47e6ec25cd.png">
+|![Image1](https://user-images.githubusercontent.com/1486609/226793136-84531388-4081-49bb-b982-3f47e6ec25cd.png) | ![Image2](https://user-images.githubusercontent.com/1486609/226809466-b1eb6f3f-4049-4a41-a2e3-52b06a6e1230.png) |
+|:---:|:---:|
 
 ## License
 
