@@ -1,5 +1,6 @@
 import os
 import argparse
+import random
 import torch
 import gradio as gr
 import transformers
@@ -11,6 +12,12 @@ from peft import prepare_model_for_int8_training, LoraConfig, get_peft_model, Pe
 model = None
 tokenizer = None
 peft_model = None
+
+def random_hyphenated_word():
+    word_list = ['apple', 'banana', 'cherry', 'date', 'elderberry', 'fig']
+    word1 = random.choice(word_list)
+    word2 = random.choice(word_list)
+    return word1 + '-' + word2
 
 def maybe_load_models():
     global model
@@ -28,8 +35,6 @@ def maybe_load_models():
         tokenizer = LlamaTokenizer.from_pretrained(
             "decapoda-research/llama-7b-hf",
         )
-
-    return model, tokenizer
 
 def reset_models():
     global model
@@ -51,7 +56,10 @@ def generate_text(
     max_new_tokens,
     progress=gr.Progress(track_tqdm=True)
 ):
-    model, tokenizer = maybe_load_models()
+    global model
+    global tokenizer
+
+    maybe_load_models()
 
     if model_name and model_name != "None":
         model = PeftModel.from_pretrained(
@@ -123,7 +131,11 @@ def tokenize_and_train(
     model_name,
     progress=gr.Progress(track_tqdm=True)
 ):
-    model, tokenizer = maybe_load_models()
+    global model
+    global tokenizer
+
+    reset_models()
+    maybe_load_models()
 
     tokenizer.pad_token_id = 0
 
@@ -302,7 +314,7 @@ with gr.Blocks(css="#refresh-button { max-width: 32px }") as demo:
 
                 with gr.Column():
                     model_name = gr.Textbox(
-                        lines=1, label="LoRA Model Name", value=""
+                        lines=1, label="LoRA Model Name", value=random_hyphenated_word()
                     )
 
                     with gr.Row():
