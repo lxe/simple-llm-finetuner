@@ -1,4 +1,5 @@
 import os
+import argparse
 import torch
 import gradio as gr
 import transformers
@@ -421,4 +422,8 @@ with gr.Blocks(css="#refresh-button { max-width: 32px }") as demo:
     
 
 if __name__ == "__main__":
-    demo.queue().launch()
+    parser = argparse.ArgumentParser(description="Simple LLaMA Finetuner")
+    parser.add_argument("-s", "--share", action="store_true", help="Enable sharing of the Gradio interface")
+    args = parser.parse_args()
+
+    demo.queue().launch(share=args.share)
