@@ -1,4 +1,4 @@
-# 🦙 Simple LLaMA FineTuner
+# 🦙 Simple LLaMA Finetuner
 
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/lxe/simple-llama-finetuner/blob/master/Simple_LLaMA_FineTuner.ipynb)
 
