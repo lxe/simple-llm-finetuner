@@ -36,13 +36,19 @@ With this intuitive UI, you can easily manage your dataset, customize parameters
 
 ### Usage
 
-I recommend using a virtual environment to install the required packages. Conda preferred
+I recommend using a virtual environment to install the required packages. Conda preferred.
 
 ```
 conda create -n llama-finetuner python=3.10
 conda activate llama-finetuner
 conda install -y cuda -c nvidia/label/cuda-11.7.0
 conda install -y pytorch=1.13.1 pytorch-cuda=11.7 -c pytorch
+```
+
+On WSL, you might need to install CUDA manually by following [these steps](https://developer.nvidia.com/cuda-downloads?target_os=Linux&target_arch=x86_64&Distribution=WSL-Ubuntu&target_version=2.0&target_type=deb_local), then running the following before you launch:
+
+```
+export LD_LIBRARY_PATH=/usr/lib/wsl/lib
 ```
 
 Clone the repository and install the required packages.
