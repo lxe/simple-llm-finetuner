@@ -61,6 +61,8 @@ def generate_text(
 
     maybe_load_models()
 
+    tokenizer.pad_token_id = 0
+
     if model_name and model_name != "None":
         model = PeftModel.from_pretrained(
             model, model_name,
@@ -69,7 +71,15 @@ def generate_text(
 
     inputs = tokenizer(text, return_tensors="pt")
     input_ids = inputs["input_ids"].to(model.device)
+
+    # llama_config = transformers.LlamaConfig()
+    # print(llama_config)
+
+    stopping_criteria_list = transformers.StoppingCriteriaList()
     generation_config = GenerationConfig(
+        # Whether to use greedy decoding. If set to False,
+        do_sample=True,
+
         # Controls the 'temperature' of the softmax distribution during sampling.
         # Higher values (e.g., 1.0) make the model generate more diverse and random outputs, 
         # while lower values (e.g., 0.1) make it more deterministic and 
@@ -98,7 +108,13 @@ def generate_text(
         # This can be useful to control the length of generated text, especially in tasks 
         # like text summarization or translation, where the output should not be excessively long.
         max_new_tokens=max_new_tokens,  
+
+        # typical_p=1,
+        # stopping_criteria=stopping_criteria_list,
+        # eos_token_id=llama_config.eos_token_id,
+        # pad_token_id=llama_config.eos_token_id
     )
+
 
 
     with torch.no_grad():
@@ -106,17 +122,14 @@ def generate_text(
             input_ids=input_ids,
             attention_mask=torch.ones_like(input_ids),
             generation_config=generation_config,
-            return_dict_in_generate=True,
-            output_scores=True,
-        )
+            # return_dict_in_generate=True,
+            # output_scores=True,
+            # eos_token_id=[tokenizer.eos_token_id],
+            use_cache=True,
+        )[0].cuda()
 
-    output = []
-    for token_id in generation_output[0]:
-        new = tokenizer.decode(token_id, skip_special_tokens=True)
-        output.append(new)
-        print(new, end=" ", flush=True)
-
-    return ''.join(output).strip()
+    output_text = tokenizer.decode(generation_output)
+    return output_text.strip()
 
 def tokenize_and_train(
     training_text,
@@ -364,25 +377,25 @@ with gr.Blocks(css="#refresh-button { max-width: 32px }") as demo:
             with gr.Column():
                 #  temperature, top_p, top_k, repeat_penalty, max_new_tokens
                 temperature = gr.Slider(
-                    minimum=0, maximum=2, value=0.7, step=0.1,
+                    minimum=0, maximum=1.99, value=0.7, step=0.01,
                     label="Temperature",
                     info=""
                 )
 
                 top_p = gr.Slider(
-                    minimum=0, maximum=1, value=0.2, step=0.1,
+                    minimum=0, maximum=1, value=0.2, step=0.01,
                     label="Top P",
                     info=""
                 )
 
                 top_k = gr.Slider(
-                    minimum=0, maximum=100, value=50, step=1,
+                    minimum=0, maximum=200, value=50, step=1,
                     label="Top K",
                     info=""
                 )
 
                 repeat_penalty = gr.Slider(
-                    minimum=0, maximum=1, value=0.8, step=0.1,
+                    minimum=0, maximum=1.5, value=0.8, step=0.01,
                     label="Repeat Penalty",
                     info=""
                 )
