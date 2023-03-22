@@ -2,7 +2,9 @@
 
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/lxe/simple-llama-finetuner/blob/master/Simple_LLaMA_FineTuner.ipynb)
 
-Simple LLaMA FineTuner is a user-friendly interface designed to facilitate fine-tuning the LLaMA-7B language model using peft/LoRA method. With this intuitive UI, you can easily manage your dataset, customize parameters, train, and evaluate the model's inference capabilities.
+Simple LLaMA FineTuner is a beginner-friendly interface designed to facilitate fine-tuning the LLaMA-7B language model using peft/LoRA method on commodity NVIDIA GPUs. With small dataset and sample lengths of 256, you can even run this on a regular Colab Tesla T4 isntance.
+
+With this intuitive UI, you can easily manage your dataset, customize parameters, train, and evaluate the model's inference capabilities.
 
 ## Acknowledgements
 
@@ -13,7 +15,6 @@ Simple LLaMA FineTuner is a user-friendly interface designed to facilitate fine-
 
 ## Features
 
-- Fine-tuning LLaMA-7B on NVIDIA RTX 3090 (or better)
 - Simply paste datasets in the UI, separated by double blank lines
 - Adjustable parameters for fine-tuning and inference
 - Begner-friendly UI with explanations for each parameter
@@ -23,7 +24,7 @@ Simple LLaMA FineTuner is a user-friendly interface designed to facilitate fine-
 ### Prerequisites
 
 - Linux or WSL
-- Modern NVIDIA GPU with >24 GB of VRAM (but it might be possible to run with less for smaller sample lengths)
+- Modern NVIDIA GPU with >16 GB of VRAM (but it might be possible to run with less for smaller sample lengths)
 
 ### Usage
 
