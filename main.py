@@ -269,7 +269,10 @@ def tokenize_and_train(
     return result
 
 
-with gr.Blocks(css="#refresh-button { max-width: 32px }") as demo:
+with gr.Blocks(
+    css="#refresh-button { max-width: 32px }", 
+    title="Simple LLaMA Finetuner") as demo:
+    
     with gr.Tab("Finetuning"):
 
         with gr.Column():
@@ -379,31 +382,31 @@ with gr.Blocks(css="#refresh-button { max-width: 32px }") as demo:
                 temperature = gr.Slider(
                     minimum=0, maximum=1.99, value=0.7, step=0.01,
                     label="Temperature",
-                    info=""
+                    info="Controls the 'temperature' of the softmax distribution during sampling. Higher values (e.g., 1.0) make the model generate more diverse and random outputs, while lower values (e.g., 0.1) make it more deterministic and focused on the highest probability tokens."
                 )
 
                 top_p = gr.Slider(
                     minimum=0, maximum=1, value=0.2, step=0.01,
                     label="Top P",
-                    info=""
+                    info="Sets the nucleus sampling threshold. In nucleus sampling, only the tokens whose cumulative probability exceeds 'top_p' are considered  for sampling. This technique helps to reduce the number of low probability tokens considered during sampling, which can lead to more diverse and coherent outputs."
                 )
 
                 top_k = gr.Slider(
                     minimum=0, maximum=200, value=50, step=1,
                     label="Top K",
-                    info=""
+                    info="Sets the number of top tokens to consider during sampling. In top-k sampling, only the 'top_k' tokens with the highest probabilities are considered for sampling. This method can lead to more focused and coherent outputs by reducing the impact of low probability tokens."
                 )
 
                 repeat_penalty = gr.Slider(
                     minimum=0, maximum=1.5, value=0.8, step=0.01,
                     label="Repeat Penalty",
-                    info=""
+                    info="Applies a penalty to the probability of tokens that have already been generated, discouraging the model from repeating the same words or phrases. The penalty is applied by dividing the token probability by a factor based on the number of times the token has appeared in the generated text."
                 )
 
                 max_new_tokens = gr.Slider(
                     minimum=0, maximum=4096, value=50, step=1,
                     label="Max New Tokens",
-                    info=""
+                    info="Limits the maximum number of tokens generated in a single iteration."
                 )
             with gr.Column():
                 with gr.Row():
