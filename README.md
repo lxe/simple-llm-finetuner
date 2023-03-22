@@ -20,8 +20,8 @@ Simple LLaMA FineTuner is a user-friendly interface designed to facilitate fine-
 
 ### Prerequisites
 
-- Python 3.7 or later
-- CUDA 11.0 or later
+- Linux or WSL
+- Modern NVIDIA GPU with >24 GB of VRAM (but it might be possible to run with less for smaller sample lengths)
 
 ### Usage
 
