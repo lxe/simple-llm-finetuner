@@ -19,7 +19,7 @@ With this intuitive UI, you can easily manage your dataset, customize parameters
 
 - Simply paste datasets in the UI, separated by double blank lines
 - Adjustable parameters for fine-tuning and inference
-- Begner-friendly UI with explanations for each parameter
+- Beginner-friendly UI with explanations for each parameter
 
 ## TODO
 
