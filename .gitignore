@@ -1,0 +1,9 @@
+out/
+7B/
+13B/
+__pycache__/
+lora-*
+checkpoint**
+minimal-llama**
+upload.py
+models/
