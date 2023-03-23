@@ -9,8 +9,8 @@
 
 ## Cli version
 - This is a cli version of [simple-llama-finetuner](https://github.com/lxe/simple-llama-finetuner/).
-- This cli version is provided by [Hacker AI Team](https://hacker-ai.ai).
-- Thank you to the original author [@lxe](https://twitter.com/lxe).
+- This cli version is provided by [@chaignc](https://twitter.com/chaignc) from [Hacker AI Team](https://hacker-ai.ai).
+- Thank you to the original author [@lxe](https://twitter.com/lxe), who did the real work :D
 
 ### Usage:
 
@@ -56,6 +56,15 @@ Other actions:
   -h, --help             Show the help
 
 
+```
+
+### How to use?
+
+```
+$ ./main_cli.py train --training-file ./example-datasets/leo.txt
+
+$ ./main_cli.py predict --inference_text "C'est qui Paulivan"
+Un gros faignant
 ```
 
 ## Original README.md
