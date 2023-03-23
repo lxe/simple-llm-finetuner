@@ -371,7 +371,7 @@ def inference_tab():
             with gr.Column():
                 #  temperature, top_p, top_k, repeat_penalty, max_new_tokens
                 temperature = gr.Slider(
-                    minimum=0, maximum=1.99, value=0.4, step=0.01,
+                    minimum=0.01, maximum=1.99, value=0.4, step=0.01,
                     label="Temperature",
                     info="Controls the 'temperature' of the softmax distribution during sampling. Higher values (e.g., 1.0) make the model generate more diverse and random outputs, while lower values (e.g., 0.1) make it more deterministic and focused on the highest probability tokens."
                 )
