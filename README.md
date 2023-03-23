@@ -22,9 +22,7 @@ Commands:
   predict
   train
 
-$ ./main_cli.py predict -h
-
-# ./main_cli.py train -h
+$ ./main_cli.py train -h
 Usage: main-cli.py train [OPTIONS]
 
 Options:
