@@ -1,6 +1,9 @@
 # 🦙 Simple LLaMA Finetuner
 
+
 This is a cli version of [](https://github.com/lxe/simple-llama-finetuner/)
+This cli version is provided by [Hacker AI Team](https://hacker-ai.ai)
+Thank you to the original Author [@lxe](https://twitter.com/lxe)
 
 [![Open In Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/lxe/simple-llama-finetuner/blob/master/Simple_LLaMA_FineTuner.ipynb)
 [![](https://img.shields.io/badge/no-bugs-brightgreen.svg)](https://github.com/lxe/no-bugs) 
