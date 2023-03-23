@@ -1,7 +1,7 @@
 # 🦙 Simple LLaMA Finetuner
 
 
-This is a cli version of [](https://github.com/lxe/simple-llama-finetuner/)
+This is a cli version of [simple-llama-finetuner](https://github.com/lxe/simple-llama-finetuner/)
 This cli version is provided by [Hacker AI Team](https://hacker-ai.ai)
 Thank you to the original Author [@lxe](https://twitter.com/lxe)
 
