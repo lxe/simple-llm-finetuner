@@ -1,4 +1,4 @@
-# 🦙 Simple LLaMA Finetuner
+# 🦙 Simple LLaMA Finetuner - CLI
 
 
 
