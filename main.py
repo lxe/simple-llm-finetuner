@@ -126,7 +126,10 @@ def tokenize_and_train(
     global tokenizer
 
     if (model is None): load_base_model()
-    if (tokenizer is None): load_tokenizer()
+    if (tokenizer is None): 
+        tokenizer = transformers.LlamaTokenizer.from_pretrained(
+            "decapoda-research/llama-7b-hf", add_eos_token=True
+        )
 
     assert model is not None
     assert tokenizer is not None
@@ -134,6 +137,8 @@ def tokenize_and_train(
     tokenizer.pad_token_id = 0
 
     paragraphs = training_text.split("\n\n\n")
+    paragraphs = [x.strip() for x in paragraphs]
+
     print("Number of samples: " + str(len(paragraphs)))
         
     def tokenize(item):
@@ -242,6 +247,7 @@ def tokenize_and_train(
         ),
     )
 
+    model.config.use_cache = False
     result = trainer.train(resume_from_checkpoint=False)
     model.save_pretrained(output_dir)
 
