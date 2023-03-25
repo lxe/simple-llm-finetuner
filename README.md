@@ -43,7 +43,7 @@ With this intuitive UI, you can easily manage your dataset, customize parameters
 ### Prerequisites
 
 - Linux or WSL
-- Modern NVIDIA GPU with >16 GB of VRAM (but it might be possible to run with less for smaller sample lengths)
+- Modern NVIDIA GPU with >= 16 GB of VRAM (but it might be possible to run with less for smaller sample lengths)
 
 ### Usage
 
