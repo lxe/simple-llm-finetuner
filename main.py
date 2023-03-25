@@ -19,7 +19,7 @@ def load_base_model():
         'decapoda-research/llama-7b-hf',
         load_in_8bit=True,
         torch_dtype=torch.float16,
-        device_map='auto'
+        device_map={'':0}
     )
 
 def load_tokenizer():
@@ -371,13 +371,13 @@ def inference_tab():
             with gr.Column():
                 #  temperature, top_p, top_k, repeat_penalty, max_new_tokens
                 temperature = gr.Slider(
-                    minimum=0.01, maximum=1.99, value=0.4, step=0.01,
+                    minimum=0.01, maximum=1.99, value=0.1, step=0.01,
                     label="Temperature",
                     info="Controls the 'temperature' of the softmax distribution during sampling. Higher values (e.g., 1.0) make the model generate more diverse and random outputs, while lower values (e.g., 0.1) make it more deterministic and focused on the highest probability tokens."
                 )
 
                 top_p = gr.Slider(
-                    minimum=0, maximum=1, value=0.3, step=0.01,
+                    minimum=0, maximum=1, value=0.75, step=0.01,
                     label="Top P",
                     info="Sets the nucleus sampling threshold. In nucleus sampling, only the tokens whose cumulative probability exceeds 'top_p' are considered  for sampling. This technique helps to reduce the number of low probability tokens considered during sampling, which can lead to more diverse and coherent outputs."
                 )
@@ -389,7 +389,7 @@ def inference_tab():
                 )
 
                 repeat_penalty = gr.Slider(
-                    minimum=0, maximum=2.5, value=1.0, step=0.01,
+                    minimum=0, maximum=2.5, value=1.2, step=0.01,
                     label="Repeat Penalty",
                     info="Applies a penalty to the probability of tokens that have already been generated, discouraging the model from repeating the same words or phrases. The penalty is applied by dividing the token probability by a factor based on the number of times the token has appeared in the generated text."
                 )
