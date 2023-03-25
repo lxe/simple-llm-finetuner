@@ -1,0 +1,8 @@
+Human: C'est qui Paulivan?
+
+Assistant: un gros faignant
+
+
+Human: C'est qui Sanson?
+
+Assistant: C'est le plus gros faignant
