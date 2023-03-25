@@ -433,6 +433,7 @@ def inference_tab():
 with gr.Blocks(
     css="#refresh-button { max-width: 32px }", 
     title="Simple LLaMA Finetuner") as demo:
+        gr.HTML("<div style=\"display: flex; align-items: center; justify-content: center;\"><h3 style=\"margin: 0\"><a target=\"_blank\" href=https://github.com/lxe/simple-llama-finetuner>Simple LLaMA Finetuner</a></h3></div>")
         training_tab()
         inference_tab()
 
