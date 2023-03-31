@@ -433,9 +433,15 @@ def inference_tab():
 with gr.Blocks(
     css="#refresh-button { max-width: 32px }", 
     title="Simple LLaMA Finetuner") as demo:
-        gr.HTML("<div style=\"display: flex; align-items: center; justify-content: center;\"><h3 style=\"margin: 0\"><a target=\"_blank\" href=https://github.com/lxe/simple-llama-finetuner>Simple LLaMA Finetuner</a></h3></div>")
+        gr.Markdown("""
+        ## 🦙 Simple LLaMA Finetuner [<img src="https://img.shields.io/badge/-Duplicate%20Space-blue?labelColor=white&amp;style=flat&amp;logo=data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAAXNSR0IArs4c6QAAAP5JREFUOE+lk7FqAkEURY+ltunEgFXS2sZGIbXfEPdLlnxJyDdYB62sbbUKpLbVNhyYFzbrrA74YJlh9r079973psed0cvUD4A+4HoCjsA85X0Dfn/RBLBgBDxnQPfAEJgBY+A9gALA4tcbamSzS4xq4FOQAJgCDwV2CPKV8tZAJcAjMMkUe1vX+U+SMhfAJEHasQIWmXNN3abzDwHUrgcRGmYcgKe0bxrblHEB4E/pndMazNpSZGcsZdBlYJcEL9Afo75molJyM2FxmPgmgPqlWNLGfwZGG6UiyEvLzHYDmoPkDDiNm9JR9uboiONcBXrpY1qmgs21x1QwyZcpvxt9NS09PlsPAAAAAElFTkSuQmCC&amp;logoWidth=14" alt="" style="display: inline;">](https://huggingface.co/spaces/lxe/simple-llama-finetuner?duplicate=true)
+        This tunes the [llama-7b](https://huggingface.co/decapoda-research/llama-7b-hf) model on your own text. Duplicate this space onto a GPU-enabled space to run.
+        """)
         training_tab()
         inference_tab()
+        gr.Markdown("""
+        Enter your samples separated by two blank lines, then click "Train" to start training a new LoRA model. Once the model is trained, you can use it to generate new text by entering a prompt and clicking "Generate".
+        """)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Simple LLaMA Finetuner")
