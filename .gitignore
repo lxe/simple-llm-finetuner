@@ -2,7 +2,7 @@ out/
 7B/
 13B/
 __pycache__/
-lora-*
+lora/
 checkpoint**
 minimal-llama**
 upload.py
