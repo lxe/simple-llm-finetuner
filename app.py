@@ -270,8 +270,41 @@ class UI():
                     top_k=top_k
                 )
             
+            def generate_async(
+                prompt,
+                do_sample,
+                max_new_tokens,
+                num_beams,
+                repeat_penalty,
+                temperature,
+                top_p,
+                top_k,
+                progress=gr.Progress(track_tqdm=True)
+            ):
+                #Do a bunch of stuff here
+                max_length = max_new_tokens
+                max_new_tokens = 1
+                
+                for i in range(max_length):
+                    this_output = self.trainer.generate(
+                        prompt,
+                        do_sample=do_sample,
+                        max_new_tokens=max_new_tokens,
+                        num_beams=num_beams,
+                        repetition_penalty=repeat_penalty,
+                        temperature=temperature,
+                        top_p=top_p,
+                        top_k=top_k
+                    )
+                    if len(prompt) == len(this_output):
+                        break
+                    prompt = this_output
+                    yield this_output
+                
+                
+            
             self.generate_btn.click(
-                fn=generate,
+                fn=generate_async,
                 inputs=[
                     self.prompt,
                     self.do_sample,
