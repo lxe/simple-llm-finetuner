@@ -195,6 +195,7 @@ class UI():
                 )
 
                 self.generate_btn = gr.Button('Generate', variant='primary')
+                self.cancel_btn = gr.Button('Cancel', variant='primary')
 
                 with gr.Row():
                     with gr.Column():
@@ -284,8 +285,11 @@ class UI():
                 #Do a bunch of stuff here
                 max_length = max_new_tokens
                 max_new_tokens = 1
+                self.cancel_request = False
                 
                 for i in range(max_length):
+                    if self.cancel_request:
+                        break
                     this_output = self.trainer.generate(
                         prompt,
                         do_sample=do_sample,
@@ -300,10 +304,9 @@ class UI():
                         break
                     prompt = this_output
                     yield this_output
-                
-                
+                    
             
-            self.generate_btn.click(
+            generate_event = self.generate_btn.click(
                 fn=generate_async,
                 inputs=[
                     self.prompt,
@@ -317,6 +320,13 @@ class UI():
                 ],
                 outputs=[self.output]
             )
+
+
+            def cancel_clicked():
+                self.cancel_request = True
+            
+            
+            self.cancel_btn.click(fn=None, inputs=None, outputs=None, cancels=[generate_event])
 
     def layout(self):
         with gr.Blocks() as demo:
