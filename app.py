@@ -250,28 +250,6 @@ class UI():
             
             
             def generate(
-                prompt, 
-                do_sample, 
-                max_new_tokens, 
-                num_beams, 
-                repeat_penalty, 
-                temperature, 
-                top_p,
-                top_k,
-                progress=gr.Progress(track_tqdm=True)
-            ):
-                return self.trainer.generate(
-                    prompt,
-                    do_sample=do_sample,
-                    max_new_tokens=max_new_tokens,
-                    num_beams=num_beams,
-                    repetition_penalty=repeat_penalty,
-                    temperature=temperature,
-                    top_p=top_p,
-                    top_k=top_k
-                )
-            
-            def generate_async(
                 prompt,
                 do_sample,
                 max_new_tokens,
@@ -282,32 +260,28 @@ class UI():
                 top_k,
                 progress=gr.Progress(track_tqdm=True)
             ):
-                #Do a bunch of stuff here
-                max_length = max_new_tokens
-                max_new_tokens = 1
-                self.cancel_request = False
-                
-                for i in range(max_length):
-                    if self.cancel_request:
-                        break
-                    this_output = self.trainer.generate(
+                #Iteratively generate tokens until we either emit max_new_tokens or stop getting new output           
+                for i in range(max_new_tokens):
+                    output_this_iteration = self.trainer.generate(
                         prompt,
                         do_sample=do_sample,
-                        max_new_tokens=max_new_tokens,
+                        max_new_tokens=1,
                         num_beams=num_beams,
                         repetition_penalty=repeat_penalty,
                         temperature=temperature,
                         top_p=top_p,
                         top_k=top_k
                     )
-                    if len(prompt) == len(this_output):
+                    #If we have the same output as last iteration, generation is done
+                    if len(prompt) == len(output_this_iteration):
                         break
-                    prompt = this_output
-                    yield this_output
+                    
+                    prompt = output_this_iteration
+                    yield output_this_iteration
                     
             
             generate_event = self.generate_btn.click(
-                fn=generate_async,
+                fn=generate,
                 inputs=[
                     self.prompt,
                     self.do_sample,
@@ -321,11 +295,6 @@ class UI():
                 outputs=[self.output]
             )
 
-
-            def cancel_clicked():
-                self.cancel_request = True
-            
-            
             self.cancel_btn.click(fn=None, inputs=None, outputs=None, cancels=[generate_event])
 
     def layout(self):
