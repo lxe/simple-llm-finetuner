@@ -47,6 +47,8 @@ class Trainer():
             load_in_8bit=True,
             torch_dtype=torch.float16,
         )
+        #Clear the collection that tracks which adapters are loaded, as they are associated with self.model
+        self.loras = {}
 
         if model_name.startswith('decapoda-research/llama'):
             self.tokenizer = transformers.LlamaTokenizer.from_pretrained(model_name)
@@ -74,7 +76,6 @@ class Trainer():
         
         if peft_config.base_model_name_or_path != self.model_name:
             self.load_model(peft_config.base_model_name_or_path)
-            self.loras = {}
 
         assert self.model_name is not None
         assert self.model is not None
