@@ -5,12 +5,17 @@ HAS_CUDA = torch.cuda.is_available()
 DEVICE = torch.device('cuda' if HAS_CUDA else 'cpu')
 
 parser = argparse.ArgumentParser(description='Simple LLM Finetuner')
-parser.add_argument('--models', nargs='+', default=[
-    'decapoda-research/llama-7b-hf', 
-    'cerebras/Cerebras-GPT-2.7B', 
-    'cerebras/Cerebras-GPT-1.3B', 
-    'EleutherAI/gpt-neo-2.7B'
-],  help='List of models to use')
+
+parser.add_argument('--models', 
+    nargs='+', 
+    default=[
+        'decapoda-research/llama-7b-hf', 
+        'cerebras/Cerebras-GPT-2.7B', 
+        'cerebras/Cerebras-GPT-1.3B', 
+        'EleutherAI/gpt-neo-2.7B'
+    ],  
+    help='List of models to use'
+)
 
 parser.add_argument('--device-map', type=str, default='', help='Device map to use')
 parser.add_argument('--model', type=str, default='cerebras/Cerebras-GPT-2.7B', help='Model to use')

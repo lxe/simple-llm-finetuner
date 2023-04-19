@@ -111,6 +111,7 @@ class UI():
                 self.new_lora_name = gr.Textbox(label='New PEFT Adapter Name', value=random_name())
             with gr.Column():
                 train_button = gr.Button('Train', variant='primary')
+                abort_button = gr.Button('Abort')
 
         def train(
             training_text, 
@@ -142,7 +143,7 @@ class UI():
 
             return new_lora_name
 
-        train_button.click(
+        train_event = train_button.click(
             fn=train,
             inputs=[
                 self.training_text,
@@ -157,10 +158,24 @@ class UI():
                 self.lora_dropout, 
             ],
             outputs=[self.new_lora_name]
-        ).then(
+        )
+
+        train_event.then(
             fn=lambda x: self.trainer.load_model(x, force=True),
             inputs=[self.model_name],
             outputs=[]
+        )
+
+        def abort(progress=gr.Progress(track_tqdm=True)):
+            print('Aborting training...')
+            self.trainer.abort_training()
+            return self.new_lora_name.value
+
+        abort_button.click(
+            fn=abort,
+            inputs=None,
+            outputs=[self.new_lora_name],
+            cancels=[train_event]
         )
 
     def inference_block(self):

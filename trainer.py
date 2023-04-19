@@ -1,5 +1,3 @@
-from config import HAS_CUDA, MODEL, DEVICE_MAP, TRAINING_PARAMS, LORA_TRAINING_PARAMS, GENERATION_PARAMS
-
 import os
 import gc
 import torch
@@ -7,6 +5,15 @@ import transformers
 import peft
 import datasets
 from contextlib import nullcontext
+
+from config import (
+    HAS_CUDA, 
+    MODEL, 
+    DEVICE_MAP, 
+    TRAINING_PARAMS, 
+    LORA_TRAINING_PARAMS, 
+    GENERATION_PARAMS
+)
 
 class Trainer():
     def __init__(self):
@@ -17,6 +24,8 @@ class Trainer():
 
         self.tokenizer = None
         self.trainer = None
+
+        self.should_abort = False
 
     def unload_model(self):
         del self.model
@@ -170,6 +179,7 @@ class Trainer():
         return training_dataset
 
     def train(self, training_text=None, new_peft_model_name=None, **kwargs):
+        assert self.should_abort is False
         assert self.model is not None
         assert self.model_name is not None
         assert self.tokenizer is not None
@@ -216,6 +226,38 @@ class Trainer():
         #     def on_log(self, args, state, control, logs=None, **kwargs):
         #         _trainer.log += json.dumps(logs) + '\n'
 
+        def should_abort():
+            return self.should_abort
+        
+        def reset_abort():
+            self.should_abort = False
+
+        class AbortCallback(transformers.TrainerCallback):
+            def on_step_end(self, args, state, control, **kwargs):
+                if should_abort():
+                    print("Stopping training...")
+                    control.should_training_stop = True
+             
+
+            def on_train_end(self, args, state, control, **kwargs):
+                if should_abort():
+                    control.should_save = False
+
+
+        # class CustomTrainer(transformers.Trainer):
+        #     def __init__(self, *args, **kwargs):
+        #         super().__init__(*args, **kwargs)
+        #         self.abort_training = False
+
+        #     def stop_training(self):
+        #         print("Stopping training...")
+        #         self.abort_training = True
+
+        #     def training_step(self, model, inputs):
+        #         if self.abort_training:
+        #             raise RuntimeError("Training aborted.")
+        #         return super().training_step(model, inputs)
+
         self.trainer = transformers.Trainer(
             model=self.model, 
             train_dataset=train_dataset, 
@@ -224,14 +266,21 @@ class Trainer():
                 self.tokenizer,  
                 mlm=False,
             ),
-            # callbacks=[LoggingCallback()]
+            callbacks=[AbortCallback()]
         )
 
         self.model.config.use_cache = False
         result = self.trainer.train(resume_from_checkpoint=False)
-        self.model.save_pretrained(output_dir)
 
+        if not should_abort():
+            self.model.save_pretrained(output_dir)
+
+        reset_abort()
         return result
+    
+    def abort_training(self):
+        self.should_abort = True
+
         
 if __name__ == '__main__':
     t = Trainer()
