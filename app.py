@@ -344,7 +344,7 @@ class UI():
     
     def run(self):
         self.ui = self.layout()
-        self.ui.queue().launch(show_error=True, share=SHARE)
+        self.ui.queue().launch(show_error=True, share=SHARE, server_name=SERVER_HOST, server_port=SERVER_PORT)
                    
 if (__name__ == '__main__'):
     ui = UI()
