@@ -35,6 +35,8 @@ parser.add_argument('--repetition-penalty', type=float, default=1.5, help='Repet
 parser.add_argument('--do-sample', action='store_true', help='Enable sampling')
 parser.add_argument('--num-beams', type=int, default=1, help='Number of beams')
 parser.add_argument('--share', action='store_true', default=False, help='Whether to deploy the interface with Gradio')
+parser.add_argument('--host', type=str, default='127.0.0.1', help='Host name or IP to launch Gradio webserver on')
+parser.add_argument('--post', type=str, default='7860', help='Host port to launch Gradio webserver on')
 
 args = parser.parse_args()
 
@@ -67,3 +69,5 @@ GENERATION_PARAMS = {
 }
 
 SHARE = args.share
+SERVER_HOST = args.host
+SERVER_PORT = args.port
