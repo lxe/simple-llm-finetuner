@@ -1,4 +1,4 @@
-from config import SHARE, MODELS, TRAINING_PARAMS, LORA_TRAINING_PARAMS, GENERATION_PARAMS
+from config import SHARE, MODELS, TRAINING_PARAMS, LORA_TRAINING_PARAMS, GENERATION_PARAMS, SERVER_HOST, SERVER_PORT
 
 import os
 import gradio as gr
@@ -344,7 +344,7 @@ class UI():
     
     def run(self):
         self.ui = self.layout()
-        self.ui.queue().launch(show_error=True, share=SHARE)
+        self.ui.queue().launch(show_error=True, share=SHARE, server_name=SERVER_HOST, server_port=SERVER_PORT)
                    
 if (__name__ == '__main__'):
     ui = UI()
