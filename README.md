@@ -8,6 +8,15 @@ app_file: app.py
 pinned: false
 ---
 
+## 👻👻👻 This project is effectively dead. Please use one of the following tools instead:
+- **https://github.com/hiyouga/LLaMA-Factory**
+- **https://github.com/unslothai/unsloth**
+- **https://github.com/oobabooga/text-generation-webui**
+
+---
+
+
+
 # 🦙 Simple LLM Finetuner
 
 [![Open In Colab](https://img.shields.io/static/v1?label=Open%20in%20Colab&message=Select%20HIGH%20RAM&color=yellow&logo=googlecolab)](https://colab.research.google.com/github/lxe/simple-llama-finetuner/blob/master/Simple_LLaMA_FineTuner.ipynb)
